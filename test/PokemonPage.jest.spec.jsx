@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { act } from 'react';
 import { render, screen } from '@testing-library/react';
 import axiosMock from 'axios';
-import { act } from 'react-dom/test-utils';
 import '@testing-library/jest-dom';
 import PokemonPage from '../src/PokemonPage';
 
@@ -78,7 +77,13 @@ describe('<PokemonPage />', () => {
 
     await act(async () => {
       render(
-        <MemoryRouter initialEntries={['/pokemon/eevee']}>
+        <MemoryRouter
+          future={{
+            v7_startTransition: true,
+            v7_relativeSplatPath: true,
+          }}
+          initialEntries={['/pokemon/eevee']}
+        >
           <PokemonPage />
         </MemoryRouter>
       );
@@ -93,7 +98,13 @@ describe('<PokemonPage />', () => {
 
     await act(async () => {
       render(
-        <MemoryRouter initialEntries={['/pokemon/eevee']}>
+        <MemoryRouter
+          future={{
+            v7_startTransition: true,
+            v7_relativeSplatPath: true,
+          }}
+          initialEntries={['/pokemon/eevee']}
+        >
           <PokemonPage />
         </MemoryRouter>
       );
@@ -107,7 +118,13 @@ describe('<PokemonPage />', () => {
 
     await act(async () => {
       render(
-        <MemoryRouter initialEntries={['/pokemon/eevee']}>
+        <MemoryRouter
+          future={{
+            v7_startTransition: true,
+            v7_relativeSplatPath: true,
+          }}
+          initialEntries={['/pokemon/eevee']}
+        >
           <PokemonPage previous={previous} next={next} />
         </MemoryRouter>
       );
@@ -128,7 +145,13 @@ describe('<PokemonPage />', () => {
 
     await act(async () => {
       render(
-        <MemoryRouter initialEntries={['/pokemon/eevee']}>
+        <MemoryRouter
+          future={{
+            v7_startTransition: true,
+            v7_relativeSplatPath: true,
+          }}
+          initialEntries={['/pokemon/eevee']}
+        >
           <PokemonPage />
         </MemoryRouter>
       );

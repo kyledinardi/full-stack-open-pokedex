@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { act } from 'react';
 import { render, screen } from '@testing-library/react';
 import axiosMock from 'axios';
-import { act } from 'react-dom/test-utils';
 import '@testing-library/jest-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
 import App from '../src/App';
@@ -23,7 +22,12 @@ describe('<App />', () => {
     });
     await act(async () => {
       render(
-        <Router>
+        <Router
+          future={{
+            v7_startTransition: true,
+            v7_relativeSplatPath: true,
+          }}
+        >
           <App />
         </Router>
       );
@@ -38,7 +42,12 @@ describe('<App />', () => {
     axiosMock.get.mockRejectedValueOnce(new Error());
     await act(async () => {
       render(
-        <Router>
+        <Router
+          future={{
+            v7_startTransition: true,
+            v7_relativeSplatPath: true,
+          }}
+        >
           <App />
         </Router>
       );
