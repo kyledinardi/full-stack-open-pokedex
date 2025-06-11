@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize]
 
 jobs:
   simple_deployment_pipeline:
@@ -16,15 +19,27 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: npm install
+      - name: Install dependencies
         run: npm install
-      - name: lint
+      - name: Lint
         run: npm run eslint
-      - name: build
+      - name: Build
         run: npm run build
-      - name: test
+      - name: Test
         run: npm run test
-      - name: e2e tests
+      - name: Run e2e tests
         run: npm run test:e2e
-      - name: trigger deployment
+      - name: Trigger deployment
+        if: ${{ github.event_name == 'push' }}
         run: curl https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID }}?key=${{ secrets.RENDER_API_KEY }}
+  tag_release:
+    needs: [simple_deployment_pipeline]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Bump version and push tag
+        if: ${{ github.event_name == 'push' }}
+        uses: anothrNick/github-tag-action@1.73.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BUMP: patch
