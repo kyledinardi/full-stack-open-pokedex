@@ -15,7 +15,7 @@ jobs:
   simple_deployment_pipeline:
     runs-on: ubuntu-24.04
     container:
-      image: mcr.microsoft.com/playwright:v1.52.0-noble
+      image: mcr.microsoft.com/playwright:v1.53.0-noble
       options: --user 1001
     steps:
       - uses: actions/checkout@v4
@@ -32,9 +32,26 @@ jobs:
         run: npm run test
       - name: Run e2e tests
         run: npm run test:e2e
+      - name: Notify on failure
+        uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
+        if: ${{ failure() }}
+        with:
+          severity: error
+          description: commit
+          details: https://github.com/${{ github.repository }}/commit/${{ github.sha }} by ${{ github.actor }} broke the build
+          text: Build failed
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
       - name: Trigger deployment
         if: ${{ env.IS_SKIPPED == 'false' }}
         run: curl https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID }}?key=${{ secrets.RENDER_API_KEY }}
+      - name: Notify on deployment
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        uses: Ilshidur/action-discord@0c4b27844ba47cb1c7bee539c8eead5284ce9fa9
+        if: ${{ env.IS_SKIPPED == 'false' }}
+        with:
+          args: 'A new version of Pokedex deployed to https://full-stack-open-pokedex-ow32.onrender.com/ by ${{ github.actor }}'
+
   tag_release:
     needs: [simple_deployment_pipeline]
     runs-on: ubuntu-24.04
